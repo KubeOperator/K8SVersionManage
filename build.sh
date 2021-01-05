@@ -25,7 +25,6 @@ baseUrl="https://kubeoperator.fit2cloud.com/k8s/${k8s_version}/${architectures}"
 sed -i -e "s#architectures=.*#architectures=${architectures}#g" upload.sh
 sed -i -e "s#k8s_version=.*#k8s_version=${k8s_version}#g" upload.sh
 
-
 k8s_packages=(
   k8s.tar.gz
   kube-controller-manager.tar
