@@ -20,10 +20,19 @@ elif [ ${os} == "aarch64" ];then
 fi
 
 save_dir=${CURRENT_DIR}/${k8s_version}_offline
-mkdir -p ${save_dir}
-baseUrl="https://kubeoperator.fit2cloud.com/k8s/${k8s_version}/${architectures}"
+mkdir -p ${save_dir}/{k8s,docker,etcd,containerd,helm,images}
+
+baseUrl="https://kubeoperator.fit2cloud.com"
 sed -i -e "s#architectures=.*#architectures=${architectures}#g" upload.sh
 sed -i -e "s#k8s_version=.*#k8s_version=${k8s_version}#g" upload.sh
+
+case "$k8s_version" in
+  v1.18.4) source versions/v1.18.4.sh ;;
+  v1.18.6) source versions/v1.18.6.sh ;;
+  v1.18.8) source versions/v1.18.8.sh ;;
+  v1.18.10) source versions/v1.18.10.sh ;;
+  v1.18.12) source versions/v1.18.12.sh ;;
+esac
 
 k8s_packages=(
   k8s.tar.gz
@@ -34,14 +43,56 @@ k8s_packages=(
   kube-proxy.tar
 )
 
+docker_image=(
+  `echo "docker.io/calico/typha:${calico_version}-${architectures}"`
+  `echo "docker.io/calico/cni:${calico_version}-${architectures}"`
+  `echo "docker.io/calico/node:${calico_version}-${architectures}"`
+  `echo "docker.io/calico/kube-controllers:${calico_version}-${architectures}"`
+  `echo "docker.io/calico/pod2daemon-flexvol:${calico_version}-${architectures}"`
+  `echo "docker.io/calico/ctl:${calico_version}-${architectures}"`
+  `echo "quay.io/coreos/flannel:${flannel_version}-${architectures}"`
+  `echo "docker.io/coredns/coredns:${coredns_version}"`
+  `echo "registry.cn-qingdao.aliyuncs.com/kubeoperator/traefik:${traefik_ingress_version}"`
+  `echo "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:${nginx_ingress_version}"`
+  `echo "docker.io/kubeoperator/metrics-server:${metrics_server_version}-${architectures}"`
+)
+
+
+echo -e "====== KubeOperator build job is starting ======\n"
+if [ "$architectures" == "amd64" ];then
+    curl -L -o ${save_dir}/helm/helm-${helm_v2_version}-linux-${architectures}.tar.gz  "${baseUrl}/helm/${helm_v2_version}/helm-${helm_v2_version}-linux-${architectures}.tar.gz"
+    docker pull registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
+    docker save registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version} -o  "${save_dir}/images/tiller:${helm_v2_version}.tar"
+#    docker rmi registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
+fi
+
+# 缓存 k8s_packages
 for p in "${k8s_packages[@]}"
   do
-    curl -L -o ${save_dir}/${p}  $baseUrl/${p}
+    curl -L -o ${save_dir}/k8s/${p}  $baseUrl/k8s/${k8s_version}/${architectures}/${p}
     if [ $? -eq 0 ];then
     echo -e "====== ${p}  is saved successfully ======\n"
     fi
   done
+
+# docker
+for d in "${docker_image[@]}"
+  do
+    image_name=`echo $d|sed -r 's/.*\///'`
+    docker pull $d
+    docker save $d -o "${save_dir}/images/${image_name}.tar"
+#    docker rmi $d
+  done
+
+curl -L -o ${save_dir}/docker/docker-${docker_version}.tgz "${baseUrl}/docker/${docker_version}/${architectures}/docker-${docker_version}.tgz"
+curl -L -o ${save_dir}/etcd/etcd-${etcd_version}-linux-${architectures}.tar.gz "${baseUrl}/etcd/${etcd_version}/${architectures}/etcd-${etcd_version}-linux-${architectures}.tar.gz"
+curl -L -o ${save_dir}/containerd/containerd-${containerd_version}-linux-${architectures}.tar.gz "${baseUrl}/containerd/${containerd_version}/${architectures}/containerd-${containerd_version}-linux-${architectures}.tar.gz"
+curl -L -o ${save_dir}/helm/helm-${helm_v3_version}-linux-${architectures}.tar.gz "${baseUrl}/helm/${helm_v3_version}/helm-${helm_v3_version}-linux-${architectures}.tar.gz"
+
+
+
 \cp -rp upload.sh ${save_dir}/
+\cp -rp versions/"${k8s_version}.sh" ${save_dir}/
 
 tar zcvf ${k8s_version}_offline.tar.gz ${k8s_version}_offline 1> /dev/null
 if [ $? -eq 0 ];then
