@@ -76,8 +76,8 @@ for image in images/*.tar; do
     fi
     docker tag ${orign_image_name} ${registry_ip}:8083/${image_name}
     docker push ${registry_ip}:8083/${image_name}
-#    清理
-#    docker rmi ${orign_image_name}
+#    清理docker镜像
+    docker rmi ${orign_image_name}
     docker rmi ${registry_ip}:8083/${image_name}
     echo "----------------------------"
 done
