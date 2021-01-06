@@ -56,7 +56,7 @@ do
 done
 
 
-# 上传组建二进制文件
+# 上传组件二进制文件
 curl -k -v --user "${registry_user}:${registry_password}" --upload-file docker/docker-${docker_version}.tgz  ${base_url}/docker/${docker_version}/${architectures}/docker-${docker_version}.tgz
 curl -k -v --user "${registry_user}:${registry_password}" --upload-file etcd/etcd-${etcd_version}-linux-${architectures}.tar.gz  ${base_url}/etcd/${etcd_version}/${architectures}/etcd-${etcd_version}-linux-${architectures}.tar.gz
 curl -k -v --user "${registry_user}:${registry_password}" --upload-file containerd/containerd-${containerd_version}-linux-${architectures}.tar.gz  ${base_url}/containerd/${containerd_version}/${architectures}/containerd-${containerd_version}-linux-${architectures}.tar.gz
