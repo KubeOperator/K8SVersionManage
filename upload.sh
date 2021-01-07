@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 architectures=amd64
-k8s_version=v1.18.12
+k8s_version=v1.18.4
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 read -p "请输入仓库地址：" registry_ip
 read -p "请输入仓库登录用户名：" registry_user
@@ -49,7 +49,7 @@ do
     ;;
   *.gz) c
     echo "Job: k8s_raw ${f}"
-    url -k -v --user "${registry_user}:${registry_password}" --upload-file ${f} ${base_url}/k8s/${k8s_version}/${architectures}/${f_name}
+    curl -k -v --user "${registry_user}:${registry_password}" --upload-file ${f} ${base_url}/k8s/${k8s_version}/${architectures}/${f_name}
     echo "----------------------------"
     ;;
   esac
