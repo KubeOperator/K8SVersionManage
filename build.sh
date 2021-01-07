@@ -32,6 +32,7 @@ case "$k8s_version" in
   v1.18.8) source versions/v1.18.8.sh ;;
   v1.18.10) source versions/v1.18.10.sh ;;
   v1.18.12) source versions/v1.18.12.sh ;;
+  v1.18.14) source versions/v1.18.14.sh ;;
 esac
 
 k8s_packages=(
