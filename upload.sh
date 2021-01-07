@@ -47,7 +47,7 @@ do
     curl -k -v --user "${registry_user}:${registry_password}" --upload-file ${f} ${base_url}/k8s/${k8s_version}/${architectures}/${f_name}
     echo "----------------------------"
     ;;
-  *.gz) c
+  *.gz)
     echo "Job: k8s_raw ${f}"
     curl -k -v --user "${registry_user}:${registry_password}" --upload-file ${f} ${base_url}/k8s/${k8s_version}/${architectures}/${f_name}
     echo "----------------------------"

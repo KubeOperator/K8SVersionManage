@@ -63,7 +63,7 @@ if [ "$architectures" == "amd64" ];then
     curl -L -o ${save_dir}/helm/helm-${helm_v2_version}-linux-${architectures}.tar.gz  "${baseUrl}/helm/${helm_v2_version}/helm-${helm_v2_version}-linux-${architectures}.tar.gz"
     docker pull registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
     docker save registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version} -o  "${save_dir}/images/tiller:${helm_v2_version}.tar"
-#    docker rmi registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
+    docker rmi registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
 fi
 
 # 缓存 k8s_packages
@@ -81,7 +81,7 @@ for d in "${docker_image[@]}"
     image_name=`echo $d|sed -r 's/.*\///'`
     docker pull $d
     docker save $d -o "${save_dir}/images/${image_name}.tar"
-#    docker rmi $d
+    docker rmi $d
   done
 
 curl -L -o ${save_dir}/docker/docker-${docker_version}.tgz "${baseUrl}/docker/${docker_version}/${architectures}/docker-${docker_version}.tgz"
