@@ -18,6 +18,7 @@ case "$k8s_version" in
   v1.18.8) source v1.18.8.sh ;;
   v1.18.10) source v1.18.10.sh ;;
   v1.18.12) source v1.18.12.sh ;;
+  v1.18.14) source v1.18.14.sh ;;
 esac
 
 if curl -k -X GET --user "${registry_user}:${registry_password}" "http://${registry_ip}:8081/service/rest/beta/security/user-sources" -H "accept: application/json" 1> /dev/null;then
@@ -74,6 +75,10 @@ for image in images/*.tar; do
     orign_image_name=`docker load -i $image|awk '{print $3}'`
     if [[ ${orign_image_name} =~ "quay.io" ]]; then
       image_name=`echo ${orign_image_name}|sed -r 's/quay.io\///g'`
+    elif [[ ${image_name} =~ "registry.cn-qingdao.aliyuncs.com" ]]; then
+      image_name=`echo ${orign_image_name}|sed -r 's/registry.cn-qingdao.aliyuncs.com\///g'`
+    elif [[ ${image_name} =~ "traefik" ]]; then
+      image_name=`echo ${orign_image_name}|sed -r 's/docker.io/library/g'`
     else
       image_name=${orign_image_name}
     fi

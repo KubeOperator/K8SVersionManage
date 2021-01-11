@@ -32,6 +32,7 @@ case "$k8s_version" in
   v1.18.8) source versions/v1.18.8.sh ;;
   v1.18.10) source versions/v1.18.10.sh ;;
   v1.18.12) source versions/v1.18.12.sh ;;
+  v1.18.14) source versions/v1.18.14.sh ;;
 esac
 
 k8s_packages=(
@@ -52,7 +53,7 @@ docker_image=(
   `echo "docker.io/calico/ctl:${calico_version}-${architectures}"`
   `echo "quay.io/coreos/flannel:${flannel_version}-${architectures}"`
   `echo "docker.io/coredns/coredns:${coredns_version}"`
-  `echo "registry.cn-qingdao.aliyuncs.com/kubeoperator/traefik:${traefik_ingress_version}"`
+  `echo "docker.io/traefik:${traefik_ingress_version}"`
   `echo "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:${nginx_ingress_version}"`
   `echo "docker.io/kubeoperator/metrics-server:${metrics_server_version}-${architectures}"`
 )
