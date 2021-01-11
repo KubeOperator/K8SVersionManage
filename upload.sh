@@ -4,6 +4,9 @@ architectures=amd64
 k8s_version=v1.18.4
 export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 read -p "请输入仓库地址：" registry_ip
+if [ "${registry_ip}" == "" ];then
+  registry_ip="registry.kubeoperator.io"
+fi
 read -p "请输入仓库登录用户名：" registry_user
 echo "请输入仓库登录密码："
 read -s registry_password
@@ -69,7 +72,7 @@ fi
 for image in images/*.tar; do
     echo "Job: Docker push ${image} ==>"
     orign_image_name=`docker load -i $image|awk '{print $3}'`
-    if [[ ${image_name} =~ "quay.io" ]]; then
+    if [[ ${orign_image_name} =~ "quay.io" ]]; then
       image_name=`echo ${orign_image_name}|sed -r 's/quay.io\///g'`
     else
       image_name=${orign_image_name}
