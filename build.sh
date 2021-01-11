@@ -70,7 +70,7 @@ fi
 # 缓存 k8s_packages
 for p in "${k8s_packages[@]}"
   do
-    curl -L -o ${save_dir}/k8s/${p}  $baseUrl/k8s/${k8s_version}/${architectures}/${p}
+    curl -L -o ${save_dir}/k8s/${p}  "${baseUrl}/k8s/${k8s_version}/${architectures}/${p}"
     if [ $? -eq 0 ];then
     echo -e "====== ${p}  is saved successfully ======\n"
     fi
