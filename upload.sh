@@ -2,7 +2,7 @@
 
 architectures=amd64
 k8s_version=v1.18.4
-export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+set -e
 read -p "请输入仓库地址：" registry_ip
 if [ "${registry_ip}" == "" ];then
   registry_ip="registry.kubeoperator.io"
