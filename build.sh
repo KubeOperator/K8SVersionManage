@@ -33,6 +33,8 @@ case "$k8s_version" in
   v1.18.10) source versions/v1.18.10.sh ;;
   v1.18.12) source versions/v1.18.12.sh ;;
   v1.18.14) source versions/v1.18.14.sh ;;
+  v1.18.15) source versions/v1.18.15.sh ;;
+  v1.20.4) source versions/v1.20.4.sh ;;
 esac
 
 k8s_packages=(
@@ -45,17 +47,17 @@ k8s_packages=(
 )
 
 docker_image=(
-  `echo "docker.io/calico/typha:${calico_version}-${architectures}"`
-  `echo "docker.io/calico/cni:${calico_version}-${architectures}"`
-  `echo "docker.io/calico/node:${calico_version}-${architectures}"`
-  `echo "docker.io/calico/kube-controllers:${calico_version}-${architectures}"`
-  `echo "docker.io/calico/pod2daemon-flexvol:${calico_version}-${architectures}"`
-  `echo "docker.io/calico/ctl:${calico_version}-${architectures}"`
-  `echo "quay.io/coreos/flannel:${flannel_version}-${architectures}"`
+  `echo "docker.io/calico/typha:${calico_version}"`
+  `echo "docker.io/calico/cni:${calico_version}"`
+  `echo "docker.io/calico/node:${calico_version}"`
+  `echo "docker.io/calico/kube-controllers:${calico_version}"`
+  `echo "docker.io/calico/pod2daemon-flexvol:${calico_version}"`
+  `echo "docker.io/calico/ctl:${calico_version}"`
+  `echo "quay.io/coreos/flannel:${flannel_version}"`
   `echo "docker.io/coredns/coredns:${coredns_version}"`
   `echo "docker.io/traefik:${traefik_ingress_version}"`
   `echo "quay.io/kubernetes-ingress-controller/nginx-ingress-controller:${nginx_ingress_version}"`
-  `echo "docker.io/kubeoperator/metrics-server:${metrics_server_version}-${architectures}"`
+  `echo "docker.io/kubeoperator/metrics-server:${metrics_server_version}"`
 )
 
 
