@@ -11,3 +11,6 @@ nginx_ingress_version="0.33.0"
 metrics_server_version="v0.3.6"
 helm_v2_version="v2.17.0"
 helm_v3_version="v3.4.1"
+cni_version='v0.8.6'
+crictl_version='v1.18.0'
+runc_version='v1.0.0-rc91'

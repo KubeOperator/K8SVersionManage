@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR=$(
-   cd "$(dirname "$0")"
-   pwd
+  cd "$(dirname "$0")"
+  pwd
 )
 set -e
 os=`uname -m`
@@ -20,7 +20,7 @@ elif [ ${os} == "aarch64" ];then
 fi
 
 save_dir=${CURRENT_DIR}/${k8s_version}_offline
-mkdir -p ${save_dir}/{k8s,docker,etcd,containerd,helm,images}
+mkdir -p ${save_dir}/{k8s,docker,etcd,containerd,helm,images,cni}
 
 baseUrl="https://kubeoperator.fit2cloud.com"
 sed -i -e "s#architectures=.*#architectures=${architectures}#g" upload.sh
@@ -60,13 +60,12 @@ docker_image=(
   `echo "docker.io/kubeoperator/metrics-server:${metrics_server_version}"`
 )
 
-
 echo -e "====== KubeOperator build job is starting ======\n"
 if [ "$architectures" == "amd64" ];then
-    curl -L -o ${save_dir}/helm/helm-${helm_v2_version}-linux-${architectures}.tar.gz  "${baseUrl}/helm/${helm_v2_version}/helm-${helm_v2_version}-linux-${architectures}.tar.gz"
-    docker pull registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
-    docker save registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version} -o  "${save_dir}/images/tiller:${helm_v2_version}.tar"
-    docker rmi registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
+  curl -L -o ${save_dir}/helm/helm-${helm_v2_version}-linux-${architectures}.tar.gz "${baseUrl}/helm/${helm_v2_version}/helm-${helm_v2_version}-linux-${architectures}.tar.gz"
+  docker pull registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
+  docker save registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version} -o "${save_dir}/images/tiller:${helm_v2_version}.tar"
+  docker rmi registry.cn-qingdao.aliyuncs.com/kubeoperator/tiller:${helm_v2_version}
 fi
 
 # 缓存 k8s_packages
@@ -91,8 +90,14 @@ curl -L -o ${save_dir}/docker/docker-${docker_version}.tgz "${baseUrl}/docker/${
 curl -L -o ${save_dir}/etcd/etcd-${etcd_version}-linux-${architectures}.tar.gz "${baseUrl}/etcd/${etcd_version}/${architectures}/etcd-${etcd_version}-linux-${architectures}.tar.gz"
 curl -L -o ${save_dir}/containerd/containerd-${containerd_version}-linux-${architectures}.tar.gz "${baseUrl}/containerd/${containerd_version}/${architectures}/containerd-${containerd_version}-linux-${architectures}.tar.gz"
 curl -L -o ${save_dir}/helm/helm-${helm_v3_version}-linux-${architectures}.tar.gz "${baseUrl}/helm/${helm_v3_version}/helm-${helm_v3_version}-linux-${architectures}.tar.gz"
+curl -L -o ${save_dir}/cni/cni-plugins-linux-${architectures}-${cni_version}.tgz "${baseUrl}/containernetworking/${cni_version}/${architectures}/cni-plugins-linux-${architectures}-${cni_version}.tgz"
+curl -L -o ${save_dir}/cni/crictl-${crictl_version}-linux-${architectures}.tar.gz "${baseUrl}/crictl/${crictl_version}/${architectures}/crictl-${crictl_version}-linux-${architectures}.tar.gz"
+curl -L -o ${save_dir}/cni/runc.${architectures} "${baseUrl}/runc/${runc_version}/${architectures}/runc.${architectures}"
 
-
+if [ "$containerd_version" == "1.3.6" ];then
+  curl -L -o ${save_dir}/cni/calico-${architectures} "${baseUrl}/cni-plugin/${cni_calico_version}/${architectures}/calico-${architectures}"
+  curl -L -o ${save_dir}/cni/calico-ipam-${architectures} "${baseUrl}/cni-plugin/${cni_calico_ipam_version}/${architectures}/calico-ipam-${architectures}"
+fi
 
 \cp -rp upload.sh ${save_dir}/
 \cp -rp versions/"${k8s_version}.sh" ${save_dir}/
