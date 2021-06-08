@@ -75,9 +75,9 @@ for image in images/*.tar; do
     orign_image_name=`docker load -i $image|awk '{print $3}'`
     if [[ ${orign_image_name} =~ "quay.io" ]]; then
       image_name=`echo ${orign_image_name}|sed -r 's/quay.io\///g'`
-    elif [[ ${image_name} =~ "registry.cn-qingdao.aliyuncs.com" ]]; then
+    elif [[ ${orign_image_name} =~ "registry.cn-qingdao.aliyuncs.com" ]]; then
       image_name=`echo ${orign_image_name}|sed -r 's/registry.cn-qingdao.aliyuncs.com\///g'`
-    elif [[ ${image_name} =~ "traefik" ]]; then
+    elif [[ ${orign_image_name} =~ "traefik" ]]; then
       image_name=`echo ${orign_image_name}|sed -r 's/docker.io/library/g'`
     else
       image_name=${orign_image_name}
