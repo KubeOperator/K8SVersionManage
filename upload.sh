@@ -2,6 +2,9 @@
 
 architectures=amd64
 k8s_version=v1.18.4
+repo_port=8081
+registry_hosted_port=8083
+
 set -e
 read -p "请输入仓库地址：" registry_ip
 if [ "${registry_ip}" == "" ];then
@@ -26,7 +29,7 @@ case "$k8s_version" in
   v1.20.8) source v1.20.8.sh ;;
 esac
 
-if curl -k -X GET --user "${registry_user}:${registry_password}" "http://${registry_ip}:8081/service/rest/beta/security/user-sources" -H "accept: application/json" 1> /dev/null;then
+if curl -k -X GET --user "${registry_user}:${registry_password}" "http://${registry_ip}:${repo_port}/service/rest/beta/security/user-sources" -H "accept: application/json" 1> /dev/null;then
   echo "Nexus login successfully!"
   echo "****************************"
   sleep 2
@@ -35,7 +38,7 @@ else
   exit 0
 fi
 
-if docker login ${registry_ip}:8083 -u${registry_user} -p${registry_password};then
+if docker login ${registry_ip}:${registry_hosted_port} -u${registry_user} -p${registry_password};then
   echo "Docker login successfully!"
   echo "****************************"
   sleep 2
@@ -44,7 +47,7 @@ else
   exit 0
 fi
 
-base_url=http://${registry_ip}:8081/repository/binary-k8s-raw
+base_url=http://${registry_ip}:${repo_port}/repository/binary-k8s-raw
 # 上传k8s_raw
 for f in k8s/*
 do
@@ -94,11 +97,11 @@ for image in images/*.tar; do
   else
     image_name=${orign_image_name}
   fi
-  docker tag ${orign_image_name} ${registry_ip}:8083/${image_name}
-  docker push ${registry_ip}:8083/${image_name}
+  docker tag ${orign_image_name} ${registry_ip}:${registry_hosted_port}/${image_name}
+  docker push ${registry_ip}:${registry_hosted_port}/${image_name}
   #清理docker镜像
   docker rmi ${orign_image_name}
-  docker rmi ${registry_ip}:8083/${image_name}
+  docker rmi ${registry_ip}:${registry_hosted_port}/${image_name}
   echo "----------------------------"
 done
 
