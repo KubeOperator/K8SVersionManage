@@ -31,6 +31,7 @@ case "$k8s_version" in
   v1.20.12) source v1.20.12.sh ;;
   v1.20.14) source v1.20.14.sh ;;
   v1.22.6) source v1.22.6.sh ;;
+  v1.22.8) source v1.22.8.sh ;;
 esac
 
 if curl -k -X GET --user "${registry_user}:${registry_password}" "http://${registry_ip}:${repo_port}/service/rest/beta/security/user-sources" -H "accept: application/json" 1> /dev/null;then
@@ -72,18 +73,14 @@ do
 done
 
 # 上传组件二进制文件
-curl -k -v --user "${registry_user}:${registry_password}" --upload-file docker/docker-${docker_version}.tgz  ${base_url}/docker/${docker_version}/${architectures}/docker-${docker_version}.tgz
-curl -k -v --user "${registry_user}:${registry_password}" --upload-file etcd/etcd-${etcd_version}-linux-${architectures}.tar.gz  ${base_url}/etcd/${etcd_version}/${architectures}/etcd-${etcd_version}-linux-${architectures}.tar.gz
-curl -k -v --user "${registry_user}:${registry_password}" --upload-file containerd/containerd-${containerd_version}-linux-${architectures}.tar.gz  ${base_url}/containerd/${containerd_version}/${architectures}/containerd-${containerd_version}-linux-${architectures}.tar.gz
-curl -k -v --user "${registry_user}:${registry_password}" --upload-file helm/helm-${helm_v3_version}-linux-${architectures}.tar.gz  ${base_url}/helm/${helm_v3_version}/helm-${helm_v3_version}-linux-${architectures}.tar.gz
+curl -k -v --user "${registry_user}:${registry_password}" --upload-file docker/docker-${docker_version}.tgz ${base_url}/docker/${docker_version}/${architectures}/docker-${docker_version}.tgz
+curl -k -v --user "${registry_user}:${registry_password}" --upload-file etcd/etcd-${etcd_version}-linux-${architectures}.tar.gz ${base_url}/etcd/${etcd_version}/${architectures}/etcd-${etcd_version}-linux-${architectures}.tar.gz
+curl -k -v --user "${registry_user}:${registry_password}" --upload-file containerd/containerd-${containerd_version}-linux-${architectures}.tar.gz ${base_url}/containerd/${containerd_version}/${architectures}/containerd-${containerd_version}-linux-${architectures}.tar.gz
+curl -k -v --user "${registry_user}:${registry_password}" --upload-file helm/helm-${helm_v3_version}-linux-${architectures}.tar.gz ${base_url}/helm/${helm_v3_version}/helm-${helm_v3_version}-linux-${architectures}.tar.gz
 curl -k -v --user "${registry_user}:${registry_password}" --upload-file cni/cni-plugins-linux-${architectures}-${cni_version}.tgz ${base_url}/containernetworking/${cni_version}/${architectures}/cni-plugins-linux-${architectures}-${cni_version}.tgz
 curl -k -v --user "${registry_user}:${registry_password}" --upload-file cni/crictl-${crictl_version}-linux-${architectures}.tar.gz ${base_url}/crictl/${crictl_version}/${architectures}/crictl-${crictl_version}-linux-${architectures}.tar.gz
 curl -k -v --user "${registry_user}:${registry_password}" --upload-file cni/runc.${architectures} ${base_url}/runc/${runc_version}/${architectures}/runc.${architectures}
-
-if [ "$containerd_version" == "1.3.6" ];then
-  curl -k -v --user "${registry_user}:${registry_password}" --upload-file cni/calico-${architectures} ${base_url}/cni-plugin/${cni_calico_version}/${architectures}/calico-${architectures}
-  curl -k -v --user "${registry_user}:${registry_password}" --upload-file cni/calico-ipam-${architectures} ${base_url}/cni-plugin/${cni_calico_ipam_version}/${architectures}/calico-ipam-${architectures}
-fi
+curl -k -v --user "${registry_user}:${registry_password}" --upload-file calicoctl/calicoctl-linux-${architectures} ${base_url}/calicoctl/${calico_version}/calicoctl-linux-${architectures}
 
 if [ "$architectures" == "amd64" ];then
   curl -k -v --user "${registry_user}:${registry_password}" --upload-file  helm/helm-${helm_v2_version}-linux-${architectures}.tar.gz ${base_url}/helm/${helm_v2_version}/helm-${helm_v2_version}-linux-${architectures}.tar.gz

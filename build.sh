@@ -20,7 +20,7 @@ elif [ ${os} == "aarch64" ];then
 fi
 
 save_dir=${CURRENT_DIR}/${k8s_version}_offline
-mkdir -p ${save_dir}/{k8s,docker,etcd,containerd,helm,images,cni}
+mkdir -p ${save_dir}/{k8s,docker,etcd,containerd,helm,images,cni,calicoctl}
 
 baseUrl="https://kubeoperator.fit2cloud.com"
 sed -i -e "s#architectures=.*#architectures=${architectures}#g" upload.sh
@@ -43,6 +43,7 @@ case "$k8s_version" in
   v1.20.12) source versions/v1.20.12.sh ;;
   v1.20.14) source versions/v1.20.14.sh ;;
   v1.22.6) source versions/v1.22.6.sh ;;
+  v1.22.8) source versions/v1.22.8.sh ;;
 esac
 
 k8s_packages=(
@@ -60,7 +61,6 @@ docker_image=(
   `echo "docker.io/calico/node:${calico_version}"`
   `echo "docker.io/calico/kube-controllers:${calico_version}"`
   `echo "docker.io/calico/pod2daemon-flexvol:${calico_version}"`
-  `echo "docker.io/calico/ctl:${calico_version}"`
   `echo "quay.io/coreos/flannel:${flannel_version}"`
   `echo "docker.io/coredns/coredns:${coredns_version}"`
   `echo "docker.io/traefik:${traefik_ingress_version}"`
@@ -79,9 +79,9 @@ fi
 # 缓存 k8s_packages
 for p in "${k8s_packages[@]}"
   do
-    curl -L -o ${save_dir}/k8s/${p}  "${baseUrl}/k8s/${k8s_version}/${architectures}/${p}"
+    curl -L -o ${save_dir}/k8s/${p} "${baseUrl}/k8s/${k8s_version}/${architectures}/${p}"
     if [ $? -eq 0 ];then
-    echo -e "====== ${p}  is saved successfully ======\n"
+    echo -e "====== ${p} is saved successfully ======\n"
     fi
   done
 
@@ -101,11 +101,7 @@ curl -L -o ${save_dir}/helm/helm-${helm_v3_version}-linux-${architectures}.tar.g
 curl -L -o ${save_dir}/cni/cni-plugins-linux-${architectures}-${cni_version}.tgz "${baseUrl}/containernetworking/${cni_version}/${architectures}/cni-plugins-linux-${architectures}-${cni_version}.tgz"
 curl -L -o ${save_dir}/cni/crictl-${crictl_version}-linux-${architectures}.tar.gz "${baseUrl}/crictl/${crictl_version}/${architectures}/crictl-${crictl_version}-linux-${architectures}.tar.gz"
 curl -L -o ${save_dir}/cni/runc.${architectures} "${baseUrl}/runc/${runc_version}/${architectures}/runc.${architectures}"
-
-if [ "$containerd_version" == "1.3.6" ];then
-  curl -L -o ${save_dir}/cni/calico-${architectures} "${baseUrl}/cni-plugin/${cni_calico_version}/${architectures}/calico-${architectures}"
-  curl -L -o ${save_dir}/cni/calico-ipam-${architectures} "${baseUrl}/cni-plugin/${cni_calico_ipam_version}/${architectures}/calico-ipam-${architectures}"
-fi
+curl -L -o ${save_dir}/calicoctl/calicoctl-linux-${architectures} "${baseUrl}/calicoctl/${calico_version}/calicoctl-linux-${architectures}"
 
 \cp -rp upload.sh ${save_dir}/
 \cp -rp versions/"${k8s_version}.sh" ${save_dir}/

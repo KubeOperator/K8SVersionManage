@@ -13,6 +13,4 @@ helm_v2_version="v2.16.9"
 helm_v3_version="v3.2.4"
 cni_version='v0.8.6'
 crictl_version='v1.18.0'
-runc_version='v1.0.0-rc91'
-cni_calico_version='v3.12.3'
-cni_calico_ipam_version='v3.12.3'
+runc_version='v1.1'
