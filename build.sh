@@ -44,6 +44,7 @@ case "$k8s_version" in
   v1.20.14) source versions/v1.20.14.sh ;;
   v1.22.6) source versions/v1.22.6.sh ;;
   v1.22.8) source versions/v1.22.8.sh ;;
+  v1.22.10) source versions/v1.22.10.sh ;;
 esac
 
 k8s_packages=(
@@ -106,6 +107,7 @@ curl -L -o ${save_dir}/calicoctl/calicoctl-linux-${architectures} "${baseUrl}/ca
 \cp -rp upload.sh ${save_dir}/
 \cp -rp versions/"${k8s_version}.sh" ${save_dir}/
 
+echo "Start Compresses the offline package..."
 tar zcvf ${k8s_version}_offline.tar.gz ${k8s_version}_offline 1> /dev/null
 if [ $? -eq 0 ];then
   echo "Packaged successfully!"
