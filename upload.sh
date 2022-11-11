@@ -34,6 +34,8 @@ case "$k8s_version" in
   v1.22.8) source v1.22.8.sh ;;
   v1.22.10) source v1.22.10.sh ;;
   v1.22.12) source v1.22.12.sh ;;
+  v1.22.14) source v1.22.14.sh ;;
+  v1.22.16) source v1.22.16.sh ;;
 esac
 
 if curl -k -X GET --user "${registry_user}:${registry_password}" "http://${registry_ip}:${repo_port}/service/rest/beta/security/user-sources" -H "accept: application/json" 1> /dev/null;then
